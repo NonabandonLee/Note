@@ -1,0 +1,165 @@
+//
+//  AppSettingViewController.m
+//  dating
+//
+//  Created by ken Zhao on 16/5/25.
+//  Copyright © 2016年 qpidnetwork. All rights reserved.
+//
+
+#import "AppSettingViewController.h"
+#import "CommonTitleDetailTableViewCell.h"
+#import "GroupData.h"
+#import "RowData.h"
+
+@interface AppSettingViewController ()
+/** <#注释#> */
+@property (nonatomic,strong) NSArray *dataArray;
+@end
+
+@implementation AppSettingViewController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    // Do any additional setup after loading the view from its nib.
+}
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    [self reloadData:YES];
+}
+
+//设置导航栏
+- (void)setupNavigationBar{
+    [super setupNavigationBar];
+    UILabel *credits = [[UILabel alloc] init];
+    credits.textColor = [UIColor whiteColor];
+    credits.text = @"appsetting";
+    [credits sizeToFit];
+    self.navigationItem.titleView = credits;
+    
+    
+}
+
+//设置内容
+- (void)setupContainView {
+    [super setupContainView];
+    
+    [self setupTableView];
+}
+
+
+//设置底部
+- (void)setupTableView {
+    
+    UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.frame.size.width, 1)];
+    headerView.backgroundColor = self.tableView.separatorColor;
+    headerView.alpha = 0.4f;
+    [self.tableView setTableHeaderView:headerView];
+    UIView *footerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 0, 0)];
+    [self.tableView setTableFooterView:footerView];
+    
+    
+    
+}
+
+#pragma mark - 数据逻辑
+- (void)reloadData:(BOOL)isReloadView{
+        NSMutableArray *array = [NSMutableArray array];
+    GroupData *group1 = [[GroupData alloc] init];
+    group1.sectionTitle = @"notification";
+    RowData *row1 = [[RowData alloc] init];
+    row1.titleName = @"chat";
+    row1.detailName = @"";
+    RowData *row2 = [[RowData alloc] init];
+        row2.titleName = @"push";
+    row2.titleName = @"";
+    group1.rowDataArray = @[row1,row2];
+    [array addObject:group1];
+    
+    
+    group1 = [[GroupData alloc] init];
+    group1.sectionTitle = @"app";
+    RowData *data1 = [[RowData alloc] init];
+    data1.titleName = @"clean";
+    data1.detailName = @"";
+    RowData *data2 = [[RowData alloc] init];
+    data2.titleName = @"update";
+    data2.detailName = @"";
+    group1.rowDataArray = @[data1,data2];
+    [array addObject:group1];
+    
+    
+    self.dataArray = array;
+    
+    if( isReloadView ) {
+        [self.tableView reloadData];
+    }
+}
+
+#pragma mark - datasource
+#pragma mark - 列表界面回调 (UITableViewDataSource / UITableViewDelegate)
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+    
+    NSInteger count = 0;
+    
+    if ([tableView isEqual:self.tableView]) {
+        count = self.dataArray.count;
+    }
+    
+    return count;
+}
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    NSInteger dataCount = 0;
+    
+    if ([tableView isEqual:self.tableView]) {
+        GroupData *group = self.dataArray[section];
+        dataCount = group.rowDataArray.count;
+    }
+    
+    return dataCount;
+    
+    
+}
+
+- (UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
+    
+    
+    UITableViewCell *result = nil;
+    CommonTitleDetailTableViewCell *cell = [CommonTitleDetailTableViewCell getUITableViewCell:tableView];
+ 
+
+    
+    GroupData *groupData = self.dataArray[indexPath.section];
+    RowData *rowdata = groupData.rowDataArray[indexPath.row];
+    cell.titleLabel.text = rowdata.titleName;
+    cell.detailLabel.text = rowdata.detailName;
+    
+    
+    result = cell;
+    
+    return result;
+}
+
+- (nullable NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section{
+    GroupData *groupData = self.dataArray[section];
+    return groupData.sectionTitle;
+}
+
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    
+}
+
+
+
+@end
