@@ -1,0 +1,36 @@
+ NSMutableArray *imageViewLoaders = [NSMutableArray array];
+    for (int i = 0; i < self.items.count; i++) {
+        ImageViewLoader *imageViewLoader = [[ImageViewLoader alloc] init];
+
+        [imageViewLoaders addObject:imageViewLoader];
+    }
+    
+     ImageViewLoader *imageViewLoader = [[ImageViewLoader alloc] init];
+    imageViewLoader.view.layer.cornerRadius = imageViewLoader.view.sizeWidth * 0.5;
+    imageViewLoader.view.layer.masksToBounds = YES;
+    __block ImageViewLoader *imageViewLoaderB = imageViewLoader;
+    // 数据填充
+    if ([[self.items objectAtIndex:indexPath.row] isKindOfClass:[LadyRecentContactObject class]]) {
+        LadyRecentContactObject *RecentItem = [self.items objectAtIndex:indexPath.row];
+
+        dispatch_async(dispatch_get_global_queue(0, 0), ^{
+            imageViewLoaderB = [imageViewLoaders objectAtIndex:indexPath.row];
+            imageViewLoaderB.view = cell.ladyImageView;
+//            imageViewLoader.view.layer.cornerRadius = imageViewLoader.view.sizeWidth * 0.5;
+//            imageViewLoader.view.layer.masksToBounds = YES;
+            imageViewLoaderB.url = RecentItem.photoURL;
+            imageViewLoaderB.path = [[FileCacheManager manager] imageCachePathWithUrl:imageViewLoaderB.url];
+            [imageViewLoaderB loadImage];
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                cell.ladyImageView.image =  [cell.ladyImageView.image circleImage];
+            });
+        });
+
+        cell.bookmarkImageView.hidden = !RecentItem.isFavorite;
+        cell.titleLabel.text = RecentItem.firstname;
+        
+        NSDate *lastTime = [NSDate dateWithTimeIntervalSince1970:RecentItem.lasttime];
+        NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+        formatter.dateFormat = @"dd MMMM";
+        cell.detailLabel.text = [NSString stringWithFormat:@"Last contact: %@",[formatter stringFromDate:lastTime]];
