@@ -1,22 +1,35 @@
-setting 
-????
-?tableview group
-1.?????4???
- ????  notification
-??? ??    chat notification
-???        push new & offers
-????????,?????
+得到当前视图的frame
 
-1.sound with vibrate
-2.vibrate only
-3.slent
-4.don`t push
+        CGSize selfSize = self.frame.size;
 
+       得到image的frame
 
-???? application
-??? ???? clean cache  ????
+        CGSize imageSize = imageV.size;
 
+       得到imageView 的frame
 
+        CGRect imageVRect = self.imageView.frame;
 
-??? check update ??detail????         ????
-	 ??????????? 
+       确定imageView 的宽度
+
+        imageVRect.size.width = selfSize.width;
+
+       根据宽度计算imageView 的高度
+
+        imageVRect.size.height = imageVRect.size.width*imageSize.height/imageSize.width;
+
+        //计算x，y
+
+        imageVRect.origin.x = 0;
+
+        imageVRect.origin.y = 0;
+
+        self.imageView.frame = imageVRect;
+
+        CGRect selfRect = self.frame;
+
+        selfRect.size.width = imageVRect.size.width;
+
+        selfRect.size.height = imageVRect.size.height;
+
+        self.frame = selfRect;
